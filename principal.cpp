@@ -20,7 +20,7 @@ struct nodo;
 struct nodo{
 	int x;
 	int y;
-	int marca;//-2 para posibles obciones, -1 nodo usuario, 0 no hay nada, 1 nodo maquina, 2 nodo llegada
+	int marca;//-2 para posibles opciones, -1 nodo usuario, 0 no hay nada, 1 nodo maquina, 2 nodo llegada
 	bool especial;
 	nodo *sig;
 	arista *sublista;
@@ -62,7 +62,7 @@ FONT *lucida;
 
 bool swSelecionDeInicio;
 bool turno;//true para usuario, false para maquina
-int ganar; // 0 estado normal, 1 gano usuario, -1 gano maquina, 2 salir del juego
+int ganar; // 0 estado normal, 1 ganó el usuario, -1 ganó la maquina, 2 salir del juego
 int modoJuego, turnoAlterado; //facil 1, dificil 2
 double distanciaActual;
 double posibleDistancia;
@@ -173,9 +173,9 @@ int menuPrincipal(){
 
 void modoDeJuego(){
     modoJuego=-1;
-    // para que no seleccione inmediatamente modo facil
+    // para que no seleccione inmediatamente modo el facil
     mouse_b = 0;
-    //blanquear el buffer
+    //limpiar el buffer
     clear_to_color(Buffer,makecol(0,0,0));
     while(modoJuego==-1){
         if((mouse_x>=190&&mouse_x<=450)&&(mouse_y>=170&&mouse_y<=230)){
@@ -199,7 +199,7 @@ void modoDeJuego(){
 void pintarGanar(){
     textprintf(Buffer,lucida,200,200,makecol(255,0,0),"GANASTE");
     draw_sprite(screen, Buffer,0,0);
-    for(int cont = 0; cont<tamCuadricula*4; cont++){//para retardar el ganaste texto
+    for(int cont = 0; cont<tamCuadricula*4; cont++){//para retardar el texto "ganaste"
         rest(50);
     }
     textprintf(IMGganar,lucida,30,400,makecol(225,225,225),"Presiona cualquier tecla para ir al Menu");
@@ -210,7 +210,7 @@ void pintarGanar(){
 void pintarPerder(){
     textprintf(Buffer,lucida,200,200,makecol(255,0,0),"PERDISTE");
     draw_sprite(screen, Buffer,0,0);
-    for(int cont = 0; cont<tamCuadricula*4; cont++){//para retardar el perder texto
+    for(int cont = 0; cont<tamCuadricula*4; cont++){//para retardar el texto "perder"
         rest(50);
     }
     textprintf(IMGperder,lucida,30,400,makecol(0,0,0),"Presiona cualquier tecla para ir al Menu");
@@ -223,8 +223,7 @@ void pintarEscena(){
     clear_to_color(Buffer,makecol(255,255,255));
     draw_sprite(Buffer,fondo,0,0);
     pintarCuadro(PTR);
-    //textprintf(Buffer,lucida,60,20,makecol(250,50,50),"Pikachu Arrives Firts");
-    //si ya se selecciono el cuadro no mostrar mause
+    //si ya se selecciono el cuadro, no mostrar mause
     if(!swSelecionDeInicio){
         buscarNodoEnTablero();
         draw_sprite(Buffer,cursor,mouse_x,mouse_y);
@@ -579,14 +578,14 @@ nodo *buscarNodoSublis(nodo *&nod, int x, int y){
     }
     return NULL;
 }
-//tener en cuenta que swSelecionDeInicio me indica si por primera vez se selecciona nodo partida
+//tener en cuenta que swSelecionDeInicio me indica si por primera vez se selecciona nodo inicial o de partida
 nodo *buscarNodoEnTablero(){
     if((mouse_b&1)&&(turno==true)){
         k = PTR;
         while(k!=NULL){
             //ubicando nodo
             if(((k->y*70<mouse_x)&&(k->y*70+70>mouse_x))&&((k->x*70<mouse_y)&&(k->x*70+70>mouse_y))){
-                //validado que sea el primer nodo y est� en una esquina
+                //validado que sea el primer nodo y esté en una esquina
                 if(!swSelecionDeInicio&&(((k->x == 1)||(k->x == 5) )&&( (k->y ==1 )||(k->y == 5) )) ){
                     nodoActual = buscarNodo(PTR,k->x, k->y);
                     //posicionar nodo de la maquina
@@ -605,7 +604,7 @@ nodo *buscarNodoEnTablero(){
                     nodoMaquina->marca = 1;
                     swSelecionDeInicio = true;
 
-                    //desmarcar obciones
+                    //desmarcar opciones
                     p=PTR;
                     while(p!=NULL){
                         if(p->marca==-2){
